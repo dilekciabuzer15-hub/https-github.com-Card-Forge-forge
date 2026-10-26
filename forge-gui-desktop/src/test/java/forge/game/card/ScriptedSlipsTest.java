@@ -47,7 +47,7 @@ public class ScriptedSlipsTest extends AITest {
         Player opp = game.getPlayers().get(0);
         Card trespasser = addCard("_____ _____ _____ Trespasser", p);
         Card blocker = addCard("Grizzly Bears", opp);
-        SpellAbility sa = trespasser.getSpellAbilities().get(0);
+        SpellAbility sa = trespasser.getSpellAbilities().get(1); // 0 is the creature spell
         sa.setActivatingPlayer(p);
 
         AbilityUtils.resolve(sa);
