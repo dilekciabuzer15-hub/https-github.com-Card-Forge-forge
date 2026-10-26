@@ -268,22 +268,21 @@ public class ChooseCardEffect extends SpellAbilityEffect {
                     }
 
                     final Player searched = AbilityUtils.getDefinedPlayers(host, sa.getParam("QuasiLibrarySearch"), sa).get(0);
-                    final int fetchNum = Math.min(searched.getCardsIn(ZoneType.Library).size(), 4);
-                    CardCollectionView shown = !p.hasKeyword("LimitSearchLibrary")
-                            ? searched.getCardsIn(ZoneType.Library) : searched.getCardsIn(ZoneType.Library, fetchNum);
+                    // only the cards actually searched can be found (Aven Mindcensor, Leonin Arbiter)
+                    final CardCollectionView shown = p.getSearchableLibrary(sa, searched);
+                    pChoices = CardLists.filter(pChoices, shown::contains);
                     DelayedReveal delayedReveal = new DelayedReveal(shown, ZoneType.Library, PlayerView.get(searched),
                             host.getTranslatedName() + " - " +
                                     Localizer.getInstance().getMessage("lblLookingCardIn") + " ");
                     Card choice = p.getController().chooseSingleEntityForEffect(pChoices, delayedReveal, sa, title,
                             !sa.hasParam("Mandatory"), p, null);
+                    if (controlTimestamp != null) {
+                        p.removeController(controlTimestamp);
+                    }
                     if (choice == null) {
                         return;
                     }
                     chosen.add(choice);
-
-                    if (controlTimestamp != null) {
-                        p.removeController(controlTimestamp);
-                    }
                 } else {
                     chosen.addAll(p.getController().chooseCardsForEffect(pChoices, sa, title, minAmount, validAmount,
                             !sa.hasParam("Mandatory"), null));
